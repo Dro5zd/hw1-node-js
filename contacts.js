@@ -1,26 +1,22 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const contactsPath = path.resolve('./db/contacts.json');
-// let contacts = [];
+const contactsPath = path.join(__dirname, './db/contacts.json');
 
 async function listContacts() {
   try {
     const res = await fs.readFile(contactsPath, 'utf-8');
-    const contacts = JSON.parse(res);
-    console.log(contacts);
+    return JSON.parse(res);
   } catch (err) {
     console.error(err);
   }
 }
 
-
 async function getContactById(contactId) {
   try{
     const res = await fs.readFile(contactsPath, 'utf-8')
     const contacts = JSON.parse(res);
-    const user = contacts.find(contact => contact.id === contactId);
-    console.log(user);
+    return contacts.find(contact => contact.id === contactId);
   }
   catch (err) {
     console.error(err)
@@ -32,8 +28,8 @@ async function removeContact(contactId) {
     const res = await fs.readFile(contactsPath, 'utf-8')
     const contacts = JSON.parse(res);
     const filteredContacts = JSON.stringify(contacts.filter(contact => contact.id !== contactId));
-    const newArr = await fs.writeFile(contactsPath, filteredContacts)
-    console.log(newArr);
+    await fs.writeFile(contactsPath, filteredContacts)
+    return JSON.parse(await fs.readFile(contactsPath, 'utf-8'))
   }
   catch (err) {
     console.error(err)
@@ -43,10 +39,10 @@ async function removeContact(contactId) {
 async function addContact(name, email, phone) {
  try{
    const res = await fs.readFile(contactsPath, 'utf-8')
-   const contactsArr = JSON.parse(res)
-   const newContactsStr = JSON.stringify(contactsArr.concat({id: Date.now(),  name, email, phone}))
-   const newContactsArr = await fs.writeFile(contactsPath, newContactsStr)
-   console.log(newContactsArr);
+   let contacts = JSON.parse(res)
+   const newContactsStr = JSON.stringify(contacts.concat({id: Date.now().toString(),  name, email, phone}))
+   await fs.writeFile(contactsPath, newContactsStr);
+   return JSON.parse(await fs.readFile(contactsPath, 'utf-8'))
  }
  catch (err) {
    console.error(err)
