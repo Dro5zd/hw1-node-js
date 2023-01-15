@@ -29,7 +29,7 @@ function invokeAction({action, id, name, email, phone}) {
       break;
 
     case 'add':
-      addContact(name, email, phone).then(data => console.table(data));
+      addContact({name, email, phone}).then(data => console.table(data));
       break;
 
     case 'remove':
